@@ -1,0 +1,2330 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product & Video Listing Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+  
+  :root {
+      --primary-color: #4a90e2;
+      --secondary-color: #f39c12;
+      --text-color: #333;
+      --background-color: #f4f4f4;
+      --hover-color: #3a7bc8;
+      --shadow-color: rgba(0, 0, 0, 0.2);
+  }
+  
+  * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+  }
+  
+  body {
+      font-family: 'Poppins', sans-serif;
+      line-height: 1.6;
+      color: var(--text-color);
+      background-color: var(--background-color);
+      overflow-x: hidden;
+  }
+  
+  header {
+      background-color: #fff;
+      box-shadow: 0 4px 10px var(--shadow-color);
+      position: fixed;
+      width: 100%;
+      z-index: 1000;
+      transition: background-color 0.3s ease;
+  }
+  
+  header.scrolled {
+      background-color: rgba(255, 255, 255, 0.9);
+  }
+  
+  nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 5%;
+  }
+  
+  .logo img {
+      height: 40px;
+      transition: transform 0.3s ease;
+  }
+  
+  .logo img:hover {
+      transform: scale(1.1);
+  }
+  
+  .nav-links {
+      display: flex;
+      list-style: none;
+  }
+  
+  .nav-links li {
+      margin-left: 2rem;
+  }
+  
+  .nav-links a {
+      text-decoration: none;
+      color: var(--text-color);
+      font-weight: 600;
+      transition: color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .nav-links a:hover {
+      color: var(--primary-color);
+      transform: translateY(-2px);
+  }
+  
+  .cart-icon {
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+  }
+  
+  .cart-icon:hover {
+      transform: scale(1.1);
+  }
+  
+  .cart-count {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background-color: var(--secondary-color);
+      color: #fff;
+      font-size: 0.8rem;
+      padding: 2px 6px;
+      border-radius: 50%;
+  }
+  
+  #hero {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('hero-bg.jpg') no-repeat center center/cover;
+      color: #fff;
+      animation: fadeIn 1s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+      from {
+          opacity: 0;
+      }
+      to {
+          opacity: 1;
+      }
+  }
+  
+  #hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      animation: slideIn 0.5s ease forwards;
+      opacity: 0;
+  }
+  
+  @keyframes slideIn {
+      from {
+          transform: translateY(-50px);
+          opacity: 0;
+      }
+      to {
+          transform: translateY(0);
+          opacity: 1;
+      }
+  }
+  
+  #hero p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+  }
+  
+  .cta-button {
+      display: inline-block;
+      background-color: var(--primary-color);
+      color: #fff;
+      padding: 0.8rem 2rem;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .cta-button:hover {
+      background-color: var(--hover-color);
+      transform: translateY(-2px);
+  }
+  
+  #products {
+      padding: 5rem 5%;
+  }
+  
+  #products h2 {
+      text-align: center;
+      margin-bottom: 3rem;
+      animation: fadeIn 1s ease forwards;
+      opacity: 0;
+  }
+  
+  .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+  }
+  
+  .product-card {
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px var(--shadow-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px var(--shadow-color);
+}
+
+.product-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.product-image:hover {
+    transform: scale(1.05);
+}
+
+.product-info {
+    padding: 1rem;
+}
+
+.product-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    transition: color 0.3s ease;
+}
+
+.product-title:hover {
+    color: var(--primary-color);
+}
+
+.product-price {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.add-to-cart {
+    display: block;
+    width: 100%;
+    padding: 0.8rem;
+    background-color: var(--secondary-color);
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.add-to-cart:hover {
+    background-color: #e67e22;
+    transform: translateY(-2px);
+}
+
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+    position: relative;
+    animation: fadeIn 1s ease forwards;
+    opacity: 0;
+}
+
+@media screen and (max-width: 768px) {
+    nav {
+        flex-direction: column;
+    }
+
+    .nav-links {
+        margin-top: 1rem;
+    }
+
+    .nav-links li {
+        margin: 0.5rem 0;
+    }
+
+    #hero h1 {
+        font-size: 2.5rem;
+    }
+
+    #hero p {
+        font-size: 1rem;
+    }
+
+    .product-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 10px var(--shadow-color);
+    }
+}
+
+
+</style>   
+  </head>
+  <body class="bg-gray-50">
+    <div class="min-h-screen">
+      <!-- Navigation -->
+      <nav class="bg-white shadow-md fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex justify-between h-16 items-center">
+            <div class="flex items-center">
+              <i class="fas fa-cube text-blue-600 text-2xl"></i>
+              <span class="ml-2 text-xl font-semibold">SocioSell</span>
+            </div>
+            <div class="flex space-x-4">
+              <button
+                onclick="switchTab('search')"
+                id="searchTab"
+                class="px-4 py-2 rounded-lg transition-colors"
+              >
+                <i class="fas fa-search mr-2"></i>Search
+              </button>
+              <button
+                onclick="switchTab('upload')"
+                id="uploadTab"
+                class="px-4 py-2 rounded-lg transition-colors"
+              >
+                <i class="fas fa-image mr-2"></i>Image
+              </button>
+              <button
+                onclick="switchTab('video')"
+                id="videoTab"
+                class="px-4 py-2 rounded-lg transition-colors"
+              >
+                <i class="fas fa-video mr-2"></i>Video
+                        </button>   
+                           <button onclick="switchTab('contributors')" id="contributorsTab" class="px-4 py-2 rounded-lg transition-colors">
+                            <i class="fas fa-users mr-2"></i>Contributors
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="pt-20 pb-8 px-4">
+        <div class="max-w-7xl mx-auto">
+          <!-- Upload Section -->
+          <div id="uploadSection" class="space-y-8">
+            <div class="text-center">
+              <h1 class="text-3xl font-bold mb-4">Generate Product Listings</h1>
+              <p class="text-gray-600">
+                Transform your product images into detailed listings
+              </p>
+            </div>
+
+            <!-- Upload Form -->
+            <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md p-6">
+              <div
+                class="upload-zone p-8 text-center rounded-lg mb-6"
+                id="dropZone"
+              >
+                <div id="uploadPrompt">
+                  <i class="fas fa-image text-4xl text-blue-500 mb-4"></i>
+                  <p class="text-gray-600 mb-4">
+                    Drag and drop your image here, or
+                  </p>
+                  <label
+                    class="bg-blue-600 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-700"
+                  >
+                    Choose File
+                    <input
+                      type="file"
+                      class="hidden"
+                      id="fileInput"
+                      accept="image/*"
+                      multiple
+                    />
+                  </label>
+                </div>
+                <div class="relative">
+                  <img id="previewImage" class="hidden max-h-48 mx-auto" />
+                  <i
+                    class="fa-solid fa-circle-xmark text-red-400 hover:text-red-600 absolute top-2 right-2 hidden"
+                    id="removeButton"
+                    onclick="removeFile()"
+                  ></i>
+                </div>
+              </div>
+
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1"
+                    >Product Title</label
+                  >
+                  <input
+                    type="text"
+                    id="productTitle"
+                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1"
+                    >Caption (optional)</label
+                  >
+                  <textarea
+                    id="caption"
+                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    rows="3"
+                  ></textarea>
+                </div>
+                <button
+                  onclick="generateListing()"
+                  id="generateBtn"
+                  class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+                >
+                  Generate Listing
+                </button>
+              </div>
+            </div>
+
+            <!-- New Upload Form for AI Analysis -->
+            <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md p-6">
+              <h1 class="text-2xl font-bold mb-4">Upload Image for AI Product Analysis</h1>
+              <form action="/upload_image" method="post" enctype="multipart/form-data">
+                <label for="file" class="block text-sm font-medium text-gray-700 mb-1">Upload Image:</label>
+                <input type="file" id="file" name="file" accept="image/*" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 mb-4">
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Analyze Image</button>
+              </form>
+            </div>
+
+            <!-- Generated Listing -->
+            <div
+              id="generatedListing"
+              class="max-w-4xl mx-auto bg-white rounded-xl shadow-md p-6 hidden"
+            >
+              <!-- Content will be populated by JavaScript -->
+            </div>
+          </div>
+
+          <!-- Search Section -->
+          <div id="searchSection" class="hidden space-y-8">
+            <div class="max-w-2xl mx-auto">
+              <div class="relative">
+                <input
+                  type="text"
+                  id="searchInput"
+                  class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="Search products or videos..."
+                />
+                <i
+                  class="fas fa-search absolute left-3 top-3 text-gray-400"
+                ></i>
+              </div>
+            </div>
+
+            <!-- Search Results -->
+            <div
+              id="searchResults"
+              class="grid grid-cols-1 md:grid-cols-3 gap-6"
+            >
+              <!-- Results will be populated by JavaScript -->
+            </div>
+          </div>
+
+          <!-- Video Upload Section -->
+          <div id="videoSection" class="hidden space-y-8">
+            <div class="text-center">
+              <h1 class="text-3xl font-bold mb-4">Generate Video Listings</h1>
+              <p class="text-gray-600">
+                Transform your product videos into detailed listings
+              </p>
+            </div>
+
+            <!-- Video Upload Form -->
+            <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md p-6">
+              <div
+                class="upload-zone p-8 text-center rounded-lg mb-6"
+                id="videoDropZone"
+              >
+                <div id="videoUploadPrompt">
+                  <i class="fas fa-video text-4xl text-blue-500 mb-4"></i>
+                  <p class="text-gray-600 mb-4">
+                    Drag and drop your video here, or
+                  </p>
+                  <label
+                    class="bg-blue-600 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-700"
+                  >
+                    Choose Video
+                    <input
+                      type="file"
+                      class="hidden"
+                      id="videoInput"
+                      accept="video/*"
+                    />
+                  </label>
+                </div>
+
+                <div class="relative">
+                  <video
+                    id="previewVideo"
+                    class="hidden max-h-48 mx-auto"
+                    controls
+                  ></video>
+
+                  <i
+                    class="fa-solid fa-circle-xmark text-red-400 hover:text-red-600 absolute top-2 right-2 hidden"
+                    id="removeVideoButton"
+                    onclick="removeVideoFile()"
+                  ></i>
+                </div>
+              </div>
+
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1"
+                    >Video Title</label
+                  >
+                  <input
+                    type="text"
+                    id="videoTitle"
+                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1"
+                    >Description (optional)</label
+                  >
+                  <textarea
+                    id="videoDescription"
+                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    rows="3"
+                  ></textarea>
+                </div>
+                <button
+                  onclick="generateVideoListing()"
+                  id="generateVideoBtn"
+                  class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+                >
+                  Generate Video Listing
+                </button>
+              </div>
+            </div>
+
+            <!-- Generated Video Listing -->
+            <div
+              id="generatedVideoListing"
+              class="max-w-4xl mx-auto bg-white rounded-xl shadow-md p-6 hidden"
+            >
+              <!-- Content will be populated by JavaScript -->
+            </div>
+          </div>       
+         
+          <div id="contributorSection" class="container mx-auto px-4 py-8 space-y-8">
+            <!-- Header Section -->
+            <div class="text-center mb-16">
+                <h1 class="text-5xl font-bold mb-4" id="mainTitle">Our Amazing Contributors</h1>
+                <p class="text-xl opacity-90" id="mainDescription">Meet the talented individuals who make our project possible through their dedication and expertise.</p>
+            </div>
+        
+            <!-- Stats Section -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12" id="stats-container">
+                <!-- Stats cards will be dynamically inserted here -->
+            </div>
+        
+            <!-- Main Content Section -->
+            <div class="bg-white rounded-2xl shadow-xl p-6">
+                <!-- Controls Section -->
+                <div class="flex flex-col md:flex-row gap-4 mb-6">
+                    <!-- Search Bar -->
+                    <div class="flex-1">
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input 
+                                type="text" 
+                                id="search-input" 
+                                placeholder="Search contributors..." 
+                                class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                        </div>
+                    </div>
+        
+                    <!-- View and Filter Controls -->
+                    <div class="flex gap-2 items-center">
+                        <!-- Filter Dropdown -->
+                        <div class="relative">
+                            <button id="filterBtn" class="px-4 py-2 border rounded-lg text-gray-600 hover:bg-gray-100">
+                                <i class="fas fa-filter mr-2"></i>
+                                <span id="currentFilter">All Contributors</span>
+                            </button>
+                            <!-- Filter Dropdown Menu -->
+                            <div id="filter-menu" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border py-2 z-50">
+                              <button data-filter="All Contributors" class="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center justify-between">
+                                  <span><i class="fas fa-users mr-2"></i>All Contributors</span>
+                                  <span class="bg-gray-200 px-2 py-0.5 rounded-full text-sm" id="all-count">0</span>
+                              </button>
+                              <button data-filter="Core Team" class="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center justify-between">
+                                  <span><i class="fas fa-star mr-2"></i>Core Team</span>
+                                  <span class="bg-gray-200 px-2 py-0.5 rounded-full text-sm" id="core-count">0</span>
+                              </button>
+                              <button data-filter="Maintainers" class="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center justify-between">
+                                  <span><i class="fas fa-shield-alt mr-2"></i>Maintainers</span>
+                                  <span class="bg-gray-200 px-2 py-0.5 rounded-full text-sm" id="maintainers-count">0</span>
+                              </button>
+                              <button data-filter="Community" class="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center justify-between">
+                                  <span><i class="fas fa-globe mr-2"></i>Community</span>
+                                  <span class="bg-gray-200 px-2 py-0.5 rounded-full text-sm" id="community-count">0</span>
+                              </button>
+                          </div>
+                        </div>
+        
+                        <!-- View Controls -->
+                        <button id="gridViewBtn" class="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-th-large"></i>
+                        </button>
+                        <button id="listViewBtn" class="px-3 py-2 border rounded-lg text-gray-600 hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-list"></i>
+                        </button>
+                    </div>
+                </div>
+        
+                <!-- Filter Tags -->
+                <div class="flex flex-wrap gap-2 mb-4" id="active-filters">
+                    <!-- Active filters will be inserted here -->
+                </div>
+        
+                <!-- Contributors Grid Container -->
+                <div id="contributors-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Contributor cards will be dynamically inserted here -->
+                </div>
+        
+                <!-- Pagination -->
+                <div class="flex justify-center mt-8" id="pagination">
+                    <!-- Pagination will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+    
+      </main>
+
+      <!-- Notification -->
+      <div id="notification" class="fixed bottom-4 right-4 hidden notification">
+        <div
+          class="bg-white rounded-lg shadow-lg p-4 flex items-center space-x-3"
+        >
+          <i class="fas fa-check-circle text-green-500 text-xl"></i>
+          <p id="notificationText" class="text-gray-700"></p>
+        </div>
+      </div>
+    </div>
+
+    <script
+    document.addEventListener('DOMContentLoaded', () => {
+      const imageUploadArea = document.getElementById('image-upload-area');
+      const videoUploadArea = document.getElementById('video-upload-area');
+      const imageUpload = document.getElementById('image-upload');
+      const videoUpload = document.getElementById('video-upload');
+      /* Scroll effect for header */
+window.addEventListener('scroll', function() {
+    const header = document.querySelector('header');
+    if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+    } else {
+        header.classList.remove('scrolled');
+    }
+});
+      function handleDragOver(e) {
+          e.preventDefault();
+          e.stopPropagation();
+      }
+  
+      function handleDrop(e, fileInput) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+              fileInput.files = e.dataTransfer.files;
+              handleFileUpload(fileInput);
+          }
+      }
+  
+      function handleFileUpload(fileInput) {
+          // Process the uploaded file here
+          console.log('File uploaded:', fileInput.files[0].name);
+      }
+  
+      imageUploadArea.addEventListener('dragover', handleDragOver);
+      imageUploadArea.addEventListener('drop', (e) => handleDrop(e, imageUpload));
+      videoUploadArea.addEventListener('dragover', handleDragOver);
+      videoUploadArea.addEventListener('drop', (e) => handleDrop(e, videoUpload));
+  
+      imageUpload.addEventListener('change', () => handleFileUpload(imageUpload));
+      videoUpload.addEventListener('change', () => handleFileUpload(videoUpload));
+  };
+  
+ 
+      const config = {
+          github: {
+              token: '', // ---------> add a secret token here
+              owner: 'Varsha-1605',
+              repo: 'SocioSell',
+              apiUrl: 'https://api.github.com'
+          },
+          filters: {
+              categories: [
+                  { label: 'All Contributors', icon: 'fas fa-users', threshold: 0 },
+                  { label: 'Core Team', icon: 'fas fa-star', threshold: 100 },
+                  { label: 'Maintainers', icon: 'fas fa-shield-alt', threshold: 50 },
+                  { label: 'Community', icon: 'fas fa-globe', threshold: 0 }
+              ]
+          }
+      };
+
+      let state = {
+          currentTab: "upload",
+          uploadedFile: null,
+          uploadedVideo: null,
+          allContributors: [],
+          currentFilter: 'All Contributors',
+          currentView: 'grid',
+          filterDropdownOpen: false
+      };
+    
+      function toggleFilterDropdown() {
+          const filterButtons = document.getElementById('filter-buttons');
+          state.filterDropdownOpen = !state.filterDropdownOpen;
+          filterButtons.classList.toggle('hidden');
+      }
+
+      function switchView(viewType) {
+          const contributorsContainer = document.getElementById('contributors-container');
+          const gridBtn = document.getElementById('gridViewBtn');
+          const listBtn = document.getElementById('listViewBtn');
+
+          state.currentView = viewType;
+
+          if (viewType === 'grid') {
+              contributorsContainer.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6';
+              gridBtn.className = 'px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors';
+              listBtn.className = 'px-3 py-2 border rounded-lg text-gray-600 hover:bg-gray-100 transition-colors';
+          } else {
+              contributorsContainer.className = 'flex flex-col space-y-4';
+              listBtn.className = 'px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors';
+              gridBtn.className = 'px-3 py-2 border rounded-lg text-gray-600 hover:bg-gray-100 transition-colors';
+          }
+
+          // Re-render the contributors with the new view
+          renderContributors(state.allContributors);
+      }
+     
+      function initializeEventListeners() {
+          const elements = {
+              fileInput: document.getElementById("fileInput"),
+              videoInput: document.getElementById("videoInput"),
+              dropZone: document.getElementById("dropZone"),
+              videoDropZone: document.getElementById("videoDropZone"),
+              searchInput: document.getElementById("searchInput"),
+              contributorSearchInput: document.getElementById('search-input'),
+              statsContainer: document.getElementById('stats-container'),
+              filterButtons: document.getElementById('filter-buttons'),
+              contributorsContainer: document.getElementById('contributors-container')
+          };
+
+          elements.fileInput?.addEventListener("change", handleFileSelect);
+          elements.videoInput?.addEventListener("change", handleVideoSelect);
+          elements.dropZone?.addEventListener("dragover", handleDragOver);
+          elements.dropZone?.addEventListener("drop", handleDrop);
+          elements.videoDropZone?.addEventListener("dragover", handleDragOver);
+          elements.videoDropZone?.addEventListener("drop", handleVideoDrop);
+          
+
+          elements.searchInput?.addEventListener("keyup", (e) => {
+              if (e.key === "Enter") searchAll();
+          });
+
+
+          elements.contributorSearchInput?.addEventListener('input', debounce((e) => {
+              filterContributors(e.target.value.toLowerCase());
+          }, 300));
+
+          const filterBtn = document.getElementById('filterBtn');
+          const filterMenu = document.getElementById('filter-menu');
+
+          filterBtn?.addEventListener('click', (e) => {
+              e.stopPropagation();
+              filterMenu.classList.toggle('hidden');
+          });
+
+          document.addEventListener('click', (e) => {
+              if (!filterBtn?.contains(e.target) && !filterMenu?.contains(e.target)) {
+                  filterMenu?.classList.add('hidden');
+              }
+          });
+
+          // Add click handlers for filter menu buttons
+          filterMenu?.querySelectorAll('button[data-filter]').forEach(button => {
+              button.addEventListener('click', (e) => {
+                  const filterValue = e.currentTarget.getAttribute('data-filter');
+                  document.getElementById('currentFilter').textContent = filterValue;
+                  filterMenu.classList.add('hidden');
+                  
+                  state.currentFilter = filterValue;
+                  applyFilter(filterValue);
+              });
+          });
+
+            document.addEventListener('click', (e) => {
+                const filterDropdown = document.getElementById('filter-buttons');
+                const filterBtn = document.getElementById('filterDropdownBtn');
+                
+                if (!filterBtn?.contains(e.target) && !filterDropdown?.contains(e.target)) {
+                    filterDropdown?.classList.add('hidden');
+                    state.filterDropdownOpen = false;
+                }
+            });
+
+            const gridViewBtn = document.getElementById('gridViewBtn');
+            const listViewBtn = document.getElementById('listViewBtn');
+
+            gridViewBtn?.addEventListener('click', () => switchView('grid'));
+            listViewBtn?.addEventListener('click', () => switchView('list'));
+
+            const searchInput = document.getElementById('search-input');
+            searchInput?.addEventListener('input', debounce((e) => {
+                filterContributors(e.target.value.toLowerCase());
+            }, 300));
+
+            switchView(state.currentView);
+            return elements;
+           }
+
+      function debounce(func, wait) {
+          let timeout;
+          return function executedFunction(...args) {
+              clearTimeout(timeout);
+              timeout = setTimeout(() => func.apply(this, args), wait);
+          };
+      }
+   
+      async function fetchGitHubData() {
+    const headers = {
+        'Authorization': `token ${config.github.token}`,
+        'Accept': 'application/vnd.github.inertia-preview+json'
+    };
+
+    try {
+        // Fetch data for the specific repository
+        const [repoData, contributors, prs, projects] = await Promise.all([
+            fetch(`${config.github.apiUrl}/repos/${config.github.owner}/${config.github.repo}`, { headers })
+                .then(res => res.json()),
+            fetch(`${config.github.apiUrl}/repos/${config.github.owner}/${config.github.repo}/contributors`, { headers })
+                .then(res => res.json()),
+            fetch(`${config.github.apiUrl}/repos/${config.github.owner}/${config.github.repo}/pulls?state=all`, { headers })
+                .then(res => res.json()),
+            fetch(`${config.github.apiUrl}/repos/${config.github.owner}/${config.github.repo}/projects`, { headers })
+                .then(res => res.json())
+        ]);
+
+        // Check if the specific repository is archived or active
+        const isActive = !repoData.archived;
+
+        // Fetch total commit count from the repoData
+        const defaultBranchCommitsCount = repoData.commits || await getCommitCount(repoData.default_branch);
+        // Count the number of projects associated with the repository
+        const projectCount = Array.isArray(projects) ? projects.length : 0;
+
+        state.allContributors = contributors;
+        updateFilterCounts(contributors);
+
+        // Render the stats
+        renderStats(
+            {
+                ...repoData,
+                default_branch_commits_count: defaultBranchCommitsCount
+            },
+            contributors.length,
+            prs.length,
+            projectCount
+        );
+        renderFilterButtons(contributors.length);
+        renderContributors(contributors);
+    } catch (error) {
+        console.error('Error fetching GitHub data:', error);
+        showError('Failed to fetch GitHub data');
+    }
+}
+
+      async function getCommitCount(branch) {
+          const headers = {
+              'Authorization': `token ${config.github.token}`,
+              'Accept': 'application/vnd.github.v3+json'
+          };
+          const url = `${config.github.apiUrl}/repos/${config.github.owner}/${config.github.repo}/commits?sha=${branch}&per_page=100`;
+          let page = 1;
+          let totalCommits = 0;
+
+          while (true) {
+              const response = await fetch(`${url}&page=${page}`, { headers });
+              const commits = await response.json();
+
+              if (!Array.isArray(commits) || commits.length === 0) {
+                  break;
+              }
+
+              totalCommits += commits.length;
+              page += 1;
+          }
+
+          return totalCommits;
+      }
+
+      function renderStats(repoData, contributorsCount, prsCount, activeProjectsCount) {
+          const stats = [
+              {
+                  icon: 'fas fa-users',
+                  count: `${contributorsCount}`,
+                  label: 'Total Contributors'
+              },
+              {
+                  icon: 'fas fa-code-branch',
+                  count: `${repoData.default_branch_commits_count || '0'}`,
+                  growth: '+8%',
+                  label: 'Total Commits'
+              },
+              {
+                  icon: 'fas fa-code-pull-request',
+                  count: `${prsCount}`,
+                  label: 'Pull Requests'
+              },
+              {
+                  icon: 'fas fa-project-diagram',
+                  count: `${activeProjectsCount}`,
+                  label: 'Active Projects'
+              }
+          ];
+
+          const statsContainer = document.getElementById('stats-container');
+          if (!statsContainer) return;
+
+          statsContainer.innerHTML = stats.map(stat => createStatCard(stat)).join('');
+      }
+
+      function createStatCard(stat) {
+          return `
+              <div class="bg-white rounded-xl p-6 shadow-lg">
+                  <div class="flex items-center space-x-4">
+                      <div class="bg-blue-100 p-3 rounded-lg">
+                          <i class="${stat.icon} text-blue-600 text-xl"></i>
+                      </div>
+                      <div>
+                          <div class="flex items-center gap-2">
+                              <span class="text-3xl font-bold text-gray-800">${stat.count}</span>
+                  
+                          </div>
+                          <p class="text-gray-600">${stat.label}</p>
+                      </div>
+                  </div>
+              </div>
+          `;
+      }
+
+      function updateActiveFilters(filterValue) {
+          const activeFilters = document.getElementById('active-filters');
+          if (filterValue === 'All Contributors') {
+              activeFilters.innerHTML = '';
+              return;
+          }
+          
+          activeFilters.innerHTML = `
+              <div class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full flex items-center gap-2">
+                  <span>${filterValue}</span>
+                  <button onclick="clearFilter()" class="hover:text-blue-800">
+                      <i class="fas fa-times"></i>
+                  </button>
+              </div>
+          `;
+      }
+
+      function clearFilter() {
+          state.currentFilter = 'All Contributors';
+          document.getElementById('currentFilter').textContent = 'All Contributors';
+          document.getElementById('active-filters').innerHTML = '';
+          filterContributors();
+      }
+     
+      function renderFilterButtons(contributors) {
+    const filterButtons = document.getElementById('filter-buttons');
+    if (!filterButtons) return;
+
+    const filterCounts = {
+        'All Contributors': contributors.length,
+        'Core Team': contributors.filter(c => c.contributions >= 100).length,
+        'Maintainers': contributors.filter(c => c.contributions >= 50).length,
+        'Community': contributors.filter(c => c.contributions < 50).length
+    };
+
+    filterButtons.innerHTML = config.filters.categories.map(filter => {
+        const count = filterCounts[filter.label] || 0;
+        return `
+            <button class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center gap-2"
+                data-filter="${filter.label}" onclick="applyFilter('${filter.label}')">
+                <i class="${filter.icon}"></i>
+                ${filter.label} (${count})
+            </button>
+        `;
+    }).join('');
+}
+            
+      function applyFilter(filterLabel) {
+          state.currentFilter = filterLabel;
+
+          const filteredContributors = state.allContributors.filter(c => {
+              if (filterLabel === 'Core Team') return c.contributions >= 100;
+              if (filterLabel === 'Maintainers') return c.contributions >= 50 && c.contributions < 100;
+              if (filterLabel === 'Community') return c.contributions < 50;
+              return true; // 'All Contributors'
+          });
+
+          renderContributors(filteredContributors);
+          updateActiveFilters(filterLabel);
+      }
+      
+      function createFilterButton(filter) {
+          return `
+              <button class="${filter.active ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'} 
+                      px-4 py-2 rounded-lg flex items-center gap-2">
+                  <i class="${filter.icon}"></i>
+                  ${filter.label}
+                  <span class="${filter.active ? 'bg-blue-500' : 'bg-gray-200'} 
+                          px-2 py-0.5 rounded-md text-sm">
+                      ${filter.count}
+                  </span>
+              </button>
+          `;
+      }
+      
+      function filterContributors(searchTerm = '') {
+    const searchInput = document.getElementById('search-input');
+    searchTerm = searchTerm || searchInput.value.toLowerCase();
+
+    const filtered = state.allContributors.filter(contributor => {
+        const matchesSearch = contributor.login.toLowerCase().includes(searchTerm);
+        
+        switch (state.currentFilter) {
+            case 'Core Team':
+                return matchesSearch && contributor.contributions >= 100;
+            case 'Maintainers':
+                return matchesSearch && contributor.contributions >= 50 && contributor.contributions < 100;
+            case 'Community':
+                return matchesSearch && contributor.contributions < 50;
+            default: // 'All Contributors'
+                return matchesSearch;
+        }
+    });
+
+    renderContributors(filtered);
+    // Update counts for the filtered results
+    updateFilterCounts(filtered);
+}
+
+      async function fetchAllPullRequests() {
+    const headers = {
+        'Authorization': `token ${config.github.token}`,
+        'Accept': 'application/vnd.github.v3+json'
+    };
+
+    let pullRequests = [];
+    let page = 1;
+    let hasMore = true;
+
+    while (hasMore) {
+        const response = await fetch(
+            `${config.github.apiUrl}/repos/${config.github.owner}/${config.github.repo}/pulls?state=all&per_page=30&page=${page}`,
+            { headers }
+        );
+        const data = await response.json();
+
+        if (response.status !== 200) {
+            console.error('Error fetching pull requests:', data.message);
+            break;
+        }
+
+        pullRequests = pullRequests.concat(data);
+        hasMore = data.length === 30; // Continue fetching if the page is full
+        page++;
+    }
+
+    return pullRequests;
+}
+
+      async function renderContributors(contributors) {
+        const contributorsContainer = document.getElementById('contributors-container');
+        if (!contributorsContainer) return;
+
+        try {
+            // Fetch all pull requests for the repository
+            const allPullRequests = await fetchAllPullRequests();
+
+            const contributorCards = await Promise.all(
+                contributors.map(contributor => createContributorCard(contributor, allPullRequests))
+            );
+            contributorsContainer.innerHTML = contributorCards.join('');
+        } catch (error) {
+            console.error('Error rendering contributors:', error);
+            showError('Failed to render contributor cards');
+        }
+    }
+  
+      async function createContributorCard(contributor, allPullRequests) {
+      try {
+          const headers = {
+              'Authorization': `token ${config.github.token}`,
+              'Accept': 'application/vnd.github.v3+json'
+          };
+
+          // Fetch issues for this contributor
+          const issues = await fetch(
+              `${config.github.apiUrl}/repos/${config.github.owner}/${config.github.repo}/issues?state=all&creator=${contributor.login}`,
+              { headers }
+          ).then(res => res.json());
+
+          // Format numbers for display
+          const formatNumber = (num) => num?.toLocaleString() || '0';
+          
+          // Create badge based on contribution level
+          const getBadge = (contributions) => {
+              if (contributions >= 100) {
+                  return '<span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm font-medium">Core Team</span>';
+              } else if (contributions >= 50) {
+                  return '<span class="bg-sky-100 text-sky-700 px-3 py-1 rounded-full text-sm font-medium">Top Contributor</span>';
+              }
+              return '';
+          };
+
+          // Create stat tab with enhanced styling
+          const createStatTab = (value, label) => `
+              <div class="text-center p-3 bg-slate-100 backdrop-blur-sm rounded-lg 
+                        hover:bg-slate-200/95 transition-all duration-200 
+                        border border-slate-200 shadow-sm hover:shadow
+                        relative overflow-hidden group">
+                  <div class="absolute inset-0 bg-gradient-to-b from-white/50 to-transparent opacity-50"></div>
+                  <div class="relative">
+                      <div class="text-lg font-bold text-slate-800 mb-0.5">${value}</div>
+                      <div class="text-sm text-slate-600 font-medium">${label}</div>
+                  </div>
+              </div>
+          `;
+
+          // External link icon SVG
+          const externalLinkIcon = `
+              <svg class="inline-block w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14">
+                  </path>
+              </svg>
+          `;
+
+          // Determine if grid or list view
+          const isGridView = document.getElementById('contributors-container').classList.contains('grid');
+          
+          if (isGridView) {
+              // Grid view code remains the same
+              return `
+                  <div class="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+                      <div class="relative group">
+                          <div class="aspect-w-16 aspect-h-12 overflow-hidden">
+                              <img src="${contributor.avatar_url}" alt="${contributor.login}" 
+                                  class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300">
+                          </div>
+                          <div class="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/50 to-transparent">
+                              <div class="absolute bottom-0 left-0 right-0 p-4">
+                                  <div class="flex items-center justify-between">
+                                      <h3 class="text-lg font-semibold text-white tracking-wide">${contributor.login}</h3>
+                                      ${getBadge(contributor.contributions)}
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                      
+                      <div class="p-4">
+                          <div class="grid grid-cols-3 gap-3 mb-4">
+                              ${createStatTab(formatNumber(contributor.contributions), 'Commits')}
+                              ${createStatTab(formatNumber(allPullRequests.filter(pr => pr.user?.login === contributor.login).length), 'PRs')}
+                              ${createStatTab(formatNumber(issues.length), 'Issues')}
+                          </div>
+                          
+                          <a href="${contributor.html_url}" target="_blank" rel="noopener noreferrer"
+                              class="block w-full text-center bg-indigo-600 text-white px-4 py-2.5 rounded-lg hover:bg-indigo-700 transition-colors font-medium">
+                              View Profile ${externalLinkIcon}
+                          </a>
+                      </div>
+                  </div>
+              `;
+          } else {
+              // Enhanced list view with better image handling and alignment
+              return `
+                  <div class="bg-white border border-slate-200 rounded-xl p-5 mb-4 hover:shadow-lg transition-all duration-300">
+                      <div class="flex flex-wrap md:flex-nowrap items-start gap-6">
+                          <div class="shrink-0 relative rounded-xl overflow-hidden group 
+                                    w-24 h-24 md:w-32 md:h-32 
+                                    shadow-md hover:shadow-xl transition-shadow duration-300">
+                              <div class="absolute inset-0 bg-slate-50">
+                                  <img src="${contributor.avatar_url}" alt="${contributor.login}" 
+                                      class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300">
+                              </div>
+                          </div>
+
+                          <div class="flex-1 min-w-0 flex flex-col gap-5">
+                              <div class="flex items-center flex-wrap gap-3">
+                                  <h3 class="text-xl font-semibold text-slate-800">${contributor.login}</h3>
+                                  ${getBadge(contributor.contributions)}
+                              </div>
+
+                              <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                  ${createStatTab(formatNumber(contributor.contributions), 'Commits')}
+                                  ${createStatTab(formatNumber(allPullRequests.filter(pr => pr.user?.login === contributor.login).length), 'PRs')}
+                                  ${createStatTab(formatNumber(issues.length), 'Issues')}
+                              </div>
+
+                              <a href="${contributor.html_url}" target="_blank" rel="noopener noreferrer"
+                                  class="inline-flex items-center bg-indigo-600 text-white px-6 py-2.5 rounded-lg 
+                                        hover:bg-indigo-700 transition-colors font-medium self-start">
+                                  View Profile ${externalLinkIcon}
+                                      </a>
+                                  </div>
+                              </div>
+                          </div>
+                      `;
+                  }
+              } catch (error) {
+                  console.error('Error creating contributor card:', error);
+                  return '';
+              }
+        }
+
+      function showError(message) {
+          const contributorsContainer = document.getElementById('contributors-container');
+          if (contributorsContainer) {
+              contributorsContainer.innerHTML = `
+                  <div class="text-red-500 text-center py-8">
+                      <i class="fas fa-exclamation-circle mr-2"></i>${message}
+                  </div>
+              `;
+          }
+      }
+
+      function switchTab(tab) {
+        currentTab = tab;
+        document
+          .getElementById("uploadSection")
+          .classList.toggle("hidden", tab !== "upload");
+        document
+          .getElementById("searchSection")
+          .classList.toggle("hidden", tab !== "search");
+        document
+          .getElementById("videoSection")
+          .classList.toggle("hidden", tab !== "video");  
+          document
+          .getElementById("contributorSection")
+          .classList.toggle("hidden", tab !== "contributors");
+        document
+          .getElementById("uploadTab")
+          .classList.toggle("tab-active", tab === "upload");
+        document
+          .getElementById("searchTab")
+          .classList.toggle("tab-active", tab === "search");
+        document
+          .getElementById("videoTab")
+          .classList.toggle("tab-active", tab === "video");    
+        document
+          .getElementById("contributorsTab")
+          .classList.toggle("tab-active", tab === "contributors");
+      }
+     
+      function updateFilterCounts(contributors) {
+    // Calculate counts based on contribution thresholds
+    const allCount = contributors.length;
+    const coreTeamCount = contributors.filter(c => c.contributions >= 100).length;
+    const maintainersCount = contributors.filter(c => c.contributions >= 50 && c.contributions < 100).length;
+    const communityCount = contributors.filter(c => c.contributions < 50).length;
+
+    // Update filter count elements if they exist
+    const elements = {
+        all: document.getElementById('all-count'),
+        core: document.getElementById('core-count'),
+        maintainers: document.getElementById('maintainers-count'),
+        community: document.getElementById('community-count')
+    };
+
+    // Safely update counts
+    if (elements.all) elements.all.textContent = allCount;
+    if (elements.core) elements.core.textContent = coreTeamCount;
+    if (elements.maintainers) elements.maintainers.textContent = maintainersCount;
+    if (elements.community) elements.community.textContent = communityCount;
+
+    // Also update the filter buttons if they exist
+    const filterButtons = document.getElementById('filter-buttons');
+    if (filterButtons) {
+        const filterCounts = {
+            'All Contributors': allCount,
+            'Core Team': coreTeamCount,
+            'Maintainers': maintainersCount,
+            'Community': communityCount
+        };
+
+        config.filters.categories.forEach(filter => {
+            const button = filterButtons.querySelector(`[data-filter="${filter.label}"]`);
+            if (button) {
+                const count = filterCounts[filter.label] || 0;
+                const countElement = button.querySelector('.count');
+                if (countElement) {
+                    countElement.textContent = count;
+                }
+            }
+        });
+    }
+
+    return {
+        allCount,
+        coreTeamCount,
+        maintainersCount,
+        communityCount
+    };
+}
+
+      document
+        .getElementById("fileInput")
+        .addEventListener("change", handleFileSelect);
+
+      function handleFileSelect(e) {
+        const file = e.target.files[0]; // Get the first file
+        if (file) {
+          displayPreview(file);
+        } else {
+          console.error("No file selected or file is invalid");
+        }
+      }
+
+      function handleVideoSelect(e) {
+        const file = e.target.files[0];
+        if (file) displayVideoPreview(file);
+      }
+
+      function handleDragOver(e) {
+        e.preventDefault();
+        e.currentTarget.classList.add("border-blue-600");
+      }
+
+      function handleDrop(e) {
+        e.preventDefault();
+        e.currentTarget.classList.remove("border-blue-600");
+        const file = e.dataTransfer.files[0];
+        if (file) displayPreview(file);
+      }
+
+      function handleVideoDrop(e) {
+        e.preventDefault();
+        e.currentTarget.classList.remove("border-blue-600");
+        const file = e.dataTransfer.files[0];
+        if (file) displayVideoPreview(file);
+      }
+
+      function displayPreview(file) {
+        if (!file || !(file instanceof Blob)) {
+          console.error("Invalid file object:", file);
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const preview = document.getElementById("previewImage");
+          preview.src = e.target.result;
+          preview.classList.remove("hidden");
+          document.getElementById("uploadPrompt").classList.add("hidden");
+          document.getElementById("removeButton").classList.remove("hidden");
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function displayVideoPreview(file) {
+        uploadedVideo = file;
+        const preview = document.getElementById("previewVideo");
+        preview.src = URL.createObjectURL(file);
+        preview.classList.remove("hidden");
+        document.getElementById("videoUploadPrompt").classList.add("hidden");
+        document.getElementById("removeVideoButton").classList.remove("hidden");
+      }
+
+      function removeFile() {
+        document.getElementById("fileInput").value = "";
+        document.getElementById("previewImage").src = "";
+        document.getElementById("previewImage").classList.add("hidden");
+        document.getElementById("removeButton").classList.add("hidden");
+        document.getElementById("uploadPrompt").classList.remove("hidden");
+      }
+
+      function removeVideoFile() {
+        document.getElementById("videoInput").value = "";
+        document.getElementById("previewVideo").src = "";
+        document.getElementById("previewVideo").classList.add("hidden");
+        document.getElementById("removeVideoButton").classList.add("hidden");
+        document.getElementById("videoUploadPrompt").classList.remove("hidden");
+      }
+
+      // Generate Listings
+      async function generateListing() {
+        const title = document.getElementById("productTitle").value;
+        const files = document.getElementById("fileInput").files;
+
+        if (!files || files.length === 0 || !title) {
+          showNotification("Please provide both image(s) and title", "error");
+          return;
+        }
+
+        const btn = document.getElementById("generateBtn");
+        btn.disabled = true;
+        btn.innerHTML =
+          '<i class="fas fa-spinner spinner mr-2"></i>Generating...';
+
+        const formData = new FormData();
+        formData.append("title", title);
+        formData.append("caption", document.getElementById("caption").value);
+
+        // Append all files to FormData
+        Array.from(files).forEach((file, index) => {
+          formData.append("files", file); // Use "files" to match the backend parameter
+        });
+
+        try {
+          const response = await fetch("/upload/image/", {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!response.ok) {
+            // If the response is not OK, log the error details
+            const errorData = await response.json();
+            console.error("Error details:", errorData);
+            throw new Error(errorData.detail || "Failed to generate listing");
+          }
+
+          const data = await response.json();
+
+          if (data.status === "success") {
+            displayGeneratedListing(data.listing);
+            showNotification("Listing generated successfully!");
+          } else {
+            throw new Error(data.message || "Failed to generate listing");
+          }
+        } catch (error) {
+          console.error("Error generating listing:", error); // Log the full error
+          showNotification(`Error: ${error.message}`, "error");
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = "Generate Listing";
+        }
+      }
+
+      // Update the generateVideoListing function
+      async function generateVideoListing() {
+        const title = document.getElementById("videoTitle").value;
+        const description = document.getElementById("videoDescription").value;
+
+        if (!title) {
+          showNotification("Please provide a video title", "error");
+          return;
+        }
+
+        const btn = document.getElementById("generateVideoBtn");
+        btn.disabled = true;
+        btn.innerHTML =
+          '<i class="fas fa-spinner spinner mr-2"></i>Generating...';
+
+        try {
+          // Create the request body
+          const formData = new FormData();
+          formData.append("title", title);
+          formData.append("description", description || "");
+
+          // Only append file if it exists
+          if (uploadedVideo) {
+            formData.append("file", uploadedVideo);
+          }
+
+          const response = await fetch("/upload/video/", {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+
+          if (
+            data.status === "success" &&
+            data.message === "Video processed successfully" &&
+            data.product_info
+          ) {
+            // Add default values for any missing properties
+            const processedData = {
+              id: data.product_info.id || `video_${Date.now()}`,
+              title: data.product_info.title || title,
+              transcript_summary:
+                data.product_info.transcript_summary ||
+                description ||
+                "No description provided",
+              highlights: data.product_info.highlights || [
+                "Video analysis in progress",
+              ],
+              key_features: data.product_info.key_features || [
+                "Features being analyzed",
+              ],
+              analytics: {
+                views: data.product_info.analytics?.views || "0",
+                likes: data.product_info.analytics?.likes || "0",
+                engagement_rate:
+                  data.product_info.analytics?.engagement_rate || "0%",
+              },
+              platforms: data.product_info.platforms || [
+                { name: "YouTube", views: "0", rating: "0" },
+                { name: "TikTok", views: "0", rating: "0" },
+              ],
+              category: data.product_info.category || "electronics",
+              duration: data.product_info.duration || "0:00",
+            };
+
+            displayGeneratedVideoListing(processedData);
+            showNotification("Video listing generated successfully!");
+          } else {
+            throw new Error(data.message || "Failed to process video");
+          }
+        } catch (error) {
+          console.error("Error generating video listing:", error);
+          showNotification(`Error: ${error.message}`, "error");
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = "Generate Video Listing";
+        }
+      }
+
+      async function getVideoAnalytics(videoId) {
+        try {
+          const response = await fetch(`/video/analytics/${videoId}`);
+          const data = await response.json();
+
+          const analyticsSection = document.getElementById(
+            "videoAnalyticsSection"
+          );
+          if (!analyticsSection) return;
+
+          if (data.status === "success" && data.analytics) {
+            analyticsSection.innerHTML = `
+                <h3 class="text-xl font-semibold mb-4">Video Analytics</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h4 class="font-semibold mb-3">Engagement</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Views</span>
+                                <span>${data.analytics.engagement.views}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Likes</span>
+                                <span>${data.analytics.engagement.likes}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Comments</span>
+                                <span>${
+                                  data.analytics.engagement.comments
+                                }</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Watch Time</span>
+                                <span>${
+                                  data.analytics.engagement.average_watch_time
+                                }</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h4 class="font-semibold mb-3">Performance</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Retention Rate</span>
+                                <span>${
+                                  data.analytics.performance.retention_rate
+                                }</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">CTR</span>
+                                <span>${
+                                  data.analytics.performance.click_through_rate
+                                }</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Conversion Rate</span>
+                                <span>${
+                                  data.analytics.performance.conversion_rate
+                                }</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h4 class="font-semibold mb-3">Demographics</h4>
+                        <div class="space-y-2">
+                            ${Object.entries(
+                              data.analytics.audience.demographics
+                            )
+                              .map(
+                                ([age, percentage]) => `
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">${age}</span>
+                                    <span>${percentage}</span>
+                                </div>
+                            `
+                              )
+                              .join("")}
+                        </div>
+                        <h5 class="font-semibold mt-4 mb-2">Top Regions</h5>
+                        <div class="flex flex-wrap gap-2">
+                            ${data.analytics.audience.top_regions
+                              .map(
+                                (region) => `
+                                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded">${region}</span>
+                            `
+                              )
+                              .join("")}
+                        </div>
+                    </div>
+                </div>
+            `;
+          }
+        } catch (error) {
+          console.error("Error loading video analytics:", error);
+          showNotification("Error loading video analytics", "error");
+        }
+      }
+
+      function displayGeneratedListing(listing) {
+        const container = document.getElementById("generatedListing");
+        const previewImage = document.getElementById("previewImage");
+
+        if (!previewImage) {
+          console.error("previewImage element not found");
+          return;
+        }
+
+        // Ensure the previewImage has a valid src
+        if (!previewImage.src) {
+          console.error("previewImage.src is undefined or empty");
+          return;
+        }
+
+        // Update the container with the generated listing details
+        container.innerHTML = `
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div>
+        <img src="${
+          previewImage.src
+        }" class="w-full rounded-lg mb-4 object-cover h-[300px]">
+        <h2 class="text-2xl font-bold mb-2">${listing.title}</h2>
+        <p class="text-gray-600 mb-4">${listing.description}</p>
+        <div class="text-2xl font-bold text-blue-600 mb-4">${
+          listing.price
+        }</div>
+      </div>
+      <div class="space-y-6">
+        <div>
+          <h3 class="text-xl font-semibold mb-4">Features</h3>
+          <div class="space-y-3">
+            ${listing.features
+              .map(
+                (feature) => `
+              <div class="flex items-center space-x-3">
+                <div class="flex-shrink-0">
+                  <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </div>
+                <span class="text-gray-700">${feature}</span>
+              </div>
+            `
+              )
+              .join("")}
+          </div>
+        </div>
+        <div class="flex space-x-4 pt-4">
+          <button onclick="getComparisons('${listing.product_id}')" 
+                  class="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-all duration-300">
+            <i class="fas fa-sync-alt mr-2"></i>Compare
+          </button>
+          <button onclick="getAnalytics('${listing.product_id}')"
+                  class="flex-1 border border-blue-600 text-blue-600 py-3 px-6 rounded-lg hover:bg-blue-50 transition-all duration-300">
+            <i class="fas fa-chart-line mr-2"></i>Analytics
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="comparisonsSection" class="mt-8 hidden">
+      <h3 class="text-xl font-semibold mb-4">Compare with Similar Products</h3>
+      <div id="comparisonsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+    </div>
+    <div id="analyticsSection" class="mt-8 hidden">
+      <h3 class="text-xl font-semibold mb-4">Product Analytics</h3>
+      <div id="analyticsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+    </div>
+  `;
+
+        // Show the generated listing container
+        container.classList.remove("hidden");
+        container.scrollIntoView({ behavior: "smooth" });
+      }
+
+      async function getComparisons(productId) {
+        try {
+          const comparisonsSection =
+            document.getElementById("comparisonsSection");
+          comparisonsSection.classList.remove("hidden");
+          const comparisonsGrid = document.getElementById("comparisonsGrid");
+          comparisonsGrid.innerHTML =
+            '<div class="col-span-3 text-center"><i class="fas fa-spinner spinner text-blue-600 text-3xl"></i></div>';
+
+          const response = await fetch(`/compare/${productId}`);
+          const data = await response.json();
+
+          if (
+            data.status === "success" &&
+            data.comparable_products &&
+            data.comparable_products.length > 0
+          ) {
+            comparisonsGrid.innerHTML = `
+                <div class="col-span-3 overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price Range</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Features</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            ${data.comparable_products
+                              .map(
+                                (product) => `
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center space-x-3">
+                                            <img src="${getProductImage(
+                                              product.id
+                                            )}" 
+                                                alt="${product.name}"
+                                                class="w-12 h-12 rounded-lg object-cover">
+                                            <div class="font-medium text-gray-900">${
+                                              product.name
+                                            }</div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-blue-600 font-medium">${
+                                          product.price_range
+                                        }</div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <ul class="list-none space-y-1">
+                                            ${product.features
+                                              .map(
+                                                (feature) => `
+                                                <li class="flex items-center space-x-2">
+                                                    <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                    </svg>
+                                                    <span class="text-sm text-gray-600">${feature}</span>
+                                                </li>
+                                            `
+                                              )
+                                              .join("")}
+                                        </ul>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <button onclick="viewProduct('${
+                                          product.id
+                                        }')" 
+                                                class="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-100 transition-all duration-300">
+                                            View Details
+                                        </button>
+                                    </td>
+                                </tr>
+                            `
+                              )
+                              .join("")}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+          } else {
+            comparisonsGrid.innerHTML = `
+                <div class="col-span-3 text-center py-8">
+                    <i class="fas fa-info-circle text-gray-400 text-3xl mb-2"></i>
+                    <p class="text-gray-500">No comparable products found</p>
+                </div>
+            `;
+          }
+          comparisonsSection.scrollIntoView({ behavior: "smooth" });
+        } catch (error) {
+          console.error("Error loading comparisons:", error);
+          showNotification("Error loading comparisons", "error");
+        }
+      }
+
+      async function getAnalytics(productId) {
+        try {
+          const analyticsSection = document.getElementById("analyticsSection");
+          analyticsSection.classList.remove("hidden");
+          const analyticsGrid = document.getElementById("analyticsGrid");
+          analyticsGrid.innerHTML =
+            '<div class="col-span-3 text-center"><i class="fas fa-spinner spinner text-blue-600 text-3xl"></i></div>';
+
+          const response = await fetch(`/product/analytics/${productId}`);
+          const data = await response.json();
+
+          if (data.status === "success" && data.analytics) {
+            analyticsGrid.innerHTML = `
+                <div class="col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Sales Performance -->
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h4 class="text-lg font-semibold mb-4">Sales Performance</h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Total Sales</span>
+                                <span class="font-medium">${
+                                  data.analytics.sales_performance.total_sales
+                                }</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Revenue</span>
+                                <span class="font-medium">${
+                                  data.analytics.sales_performance.revenue
+                                }</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Growth Rate</span>
+                                <span class="font-medium">${
+                                  data.analytics.sales_performance.growth_rate
+                                }</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customer Behavior -->
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h4 class="text-lg font-semibold mb-4">Customer Behavior</h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">View to Purchase Rate</span>
+                                <span class="font-medium">${
+                                  data.analytics.customer_behavior
+                                    .view_to_purchase_rate
+                                }</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Cart Abandonment</span>
+                                <span class="font-medium">${
+                                  data.analytics.customer_behavior
+                                    .cart_abandonment_rate
+                                }</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Average Rating</span>
+                                <span class="font-medium">${
+                                  data.analytics.customer_behavior
+                                    .average_rating
+                                }</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Demographics -->
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h4 class="text-lg font-semibold mb-4">Demographics</h4>
+                        <div class="space-y-3">
+                            ${Object.entries(
+                              data.analytics.demographics.age_groups
+                            )
+                              .map(
+                                ([age, percentage]) => `
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">${age}</span>
+                                    <span class="font-medium">${percentage}</span>
+                                </div>
+                            `
+                              )
+                              .join("")}
+                        </div>
+                    </div>
+
+                    <!-- Marketing Metrics -->
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h4 class="text-lg font-semibold mb-4">Marketing Metrics</h4>
+                        <div class="space-y-3">
+                            ${Object.entries(data.analytics.marketing_metrics)
+                              .map(
+                                ([metric, value]) => `
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">${metric
+                                      .split("_")
+                                      .map(
+                                        (word) =>
+                                          word.charAt(0).toUpperCase() +
+                                          word.slice(1)
+                                      )
+                                      .join(" ")}</span>
+                                    <span class="font-medium">${value}</span>
+                                </div>
+                            `
+                              )
+                              .join("")}
+                        </div>
+                    </div>
+                </div>
+            `;
+          } else {
+            analyticsGrid.innerHTML = `
+                <div class="col-span-3 text-center py-8">
+                    <i class="fas fa-chart-bar text-gray-400 text-3xl mb-2"></i>
+                    <p class="text-gray-500">No analytics data available</p>
+                </div>
+            `;
+          }
+          analyticsSection.scrollIntoView({ behavior: "smooth" });
+        } catch (error) {
+          console.error("Error loading analytics:", error);
+          showNotification("Error loading analytics", "error");
+        }
+      }
+
+      // Update the displayGeneratedVideoListing function to handle missing properties
+      function displayGeneratedVideoListing(videoInfo) {
+        const container = document.getElementById("generatedVideoListing");
+        container.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+                ${
+                  uploadedVideo
+                    ? `<video src="${
+                        document.getElementById("previewVideo").src
+                      }" 
+                            class="w-full rounded-lg mb-4 object-cover" 
+                            controls></video>`
+                    : `<div class="w-full h-[300px] bg-gray-100 rounded-lg mb-4 flex items-center justify-center">
+                        <i class="fas fa-video text-gray-400 text-4xl"></i>
+                     </div>`
+                }
+                <h2 class="text-2xl font-bold mb-2">${videoInfo.title}</h2>
+                <p class="text-gray-600 mb-4">${
+                  videoInfo.transcript_summary
+                }</p>
+                <div class="flex items-center space-x-4 mb-4">
+                    <span class="text-gray-500"><i class="fas fa-eye mr-1"></i>${
+                      videoInfo.analytics.views
+                    }</span>
+                    <span class="text-gray-500"><i class="fas fa-thumbs-up mr-1"></i>${
+                      videoInfo.analytics.likes
+                    }</span>
+                    <span class="text-gray-500"><i class="fas fa-chart-line mr-1"></i>${
+                      videoInfo.analytics.engagement_rate
+                    }</span>
+                </div>
+            </div>
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Highlights</h3>
+                    <div class="space-y-3">
+                        ${videoInfo.highlights
+                          .map(
+                            (highlight) => `
+                            <div class="flex items-center space-x-3">
+                                <div class="flex-shrink-0">
+                                    <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-gray-700">${highlight}</span>
+                            </div>
+                        `
+                          )
+                          .join("")}
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Key Features</h3>
+                    <div class="space-y-3">
+                        ${videoInfo.key_features
+                          .map(
+                            (feature) => `
+                            <div class="flex items-center space-x-3">
+                                <div class="flex-shrink-0">
+                                    <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-gray-700">${feature}</span>
+                            </div>
+                        `
+                          )
+                          .join("")}
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Platforms</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        ${videoInfo.platforms
+                          .map(
+                            (platform) => `
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="font-medium mb-2">${platform.name}</h4>
+                                <div class="text-sm text-gray-600">
+                                    <div>Views: ${platform.views}</div>
+                                    <div>Rating: ${platform.rating}</div>
+                                </div>
+                            </div>
+                        `
+                          )
+                          .join("")}
+                    </div>
+                </div>
+                <div class="flex space-x-4 pt-4">
+                    <button onclick="getVideoComparisons('${videoInfo.id}')" 
+                            class="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-all duration-300">
+                        <i class="fas fa-sync-alt mr-2"></i>Compare
+                    </button>
+                    <button onclick="getVideoAnalytics('${videoInfo.id}')"
+                            class="flex-1 border border-blue-600 text-blue-600 py-3 px-6 rounded-lg hover:bg-blue-50 transition-all duration-300">
+                        <i class="fas fa-chart-line mr-2"></i>Analytics
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="videoAnalyticsSection" class="mt-8">
+            <!-- Analytics content will be loaded here -->
+        </div>
+        <div id="videoComparisonsSection" class="mt-8 hidden">
+            <h3 class="text-xl font-semibold mb-4">Compare with Similar Videos</h3>
+            <div id="videoComparisonsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+        </div>
+    `;
+        container.classList.remove("hidden");
+        container.scrollIntoView({ behavior: "smooth" });
+
+        // Automatically load analytics
+        if (videoInfo.id) {
+          getVideoAnalytics(videoInfo.id);
+        }
+      }
+      // Add video comparison function
+      async function getVideoComparisons(videoId) {
+        try {
+          const comparisonsSection = document.getElementById(
+            "videoComparisonsSection"
+          );
+          comparisonsSection.classList.remove("hidden");
+          const comparisonsGrid = document.getElementById(
+            "videoComparisonsGrid"
+          );
+          comparisonsGrid.innerHTML =
+            '<div class="col-span-3 text-center"><i class="fas fa-spinner spinner text-blue-600 text-3xl"></i></div>';
+
+          const response = await fetch(`/video/compare/${videoId}`);
+          const data = await response.json();
+
+          if (
+            data.status === "success" &&
+            data.comparable_videos &&
+            data.comparable_videos.length > 0
+          ) {
+            comparisonsGrid.innerHTML = data.comparable_videos
+              .map(
+                (video) => `
+                <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
+                    <div class="relative">
+                        <div class="w-full h-48 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-play-circle text-gray-400 text-4xl"></i>
+                        </div>
+                        <span class="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white px-2 py-1 rounded text-sm">
+                            ${video.duration}
+                        </span>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold">${video.title}</h4>
+                        <p class="text-sm text-gray-500">${
+                          video.views
+                        } views</p>
+                    </div>
+                    <div class="space-y-2">
+                        <h5 class="font-medium">Comparison Points</h5>
+                        <ul class="space-y-1">
+                            ${video.comparison_points
+                              .map(
+                                (point) => `
+                                <li class="flex items-center space-x-2 text-sm">
+                                    <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <span>${point}</span>
+                                </li>
+                            `
+                              )
+                              .join("")}
+                        </ul>
+                    </div>
+                    <div class="pt-2">
+                        <span class="text-blue-600 font-medium">${
+                          video.price_range
+                        }</span>
+                    </div>
+                    <button onclick="viewVideo('${video.id}')"
+                            class="w-full bg-blue-50 text-blue-600 py-2 rounded-lg hover:bg-blue-100 transition-all duration-300">
+                        View Details
+                    </button>
+                </div>
+            `
+              )
+              .join("");
+          } else {
+            comparisonsGrid.innerHTML = `
+                <div class="col-span-3 text-center py-8">
+                    <i class="fas fa-info-circle text-gray-400 text-3xl mb-2"></i>
+                    <p class="text-gray-500">No comparable videos found</p>
+                </div>
+            `;
+          }
+          comparisonsSection.scrollIntoView({ behavior: "smooth" });
+        } catch (error) {
+          console.error("Error loading video comparisons:", error);
+          showNotification("Error loading video comparisons", "error");
+        }
+      }
+
+      // Add view video function
+      async function viewVideo(videoId) {
+        try {
+          const response = await fetch(`/video/listings/${videoId}`);
+          const data = await response.json();
+
+          if (data.status === "success" && data.listings.length > 0) {
+            const videoInfo = data.listings[0];
+            displayGeneratedVideoListing({
+              id: videoId,
+              title: videoInfo.title,
+              transcript_summary:
+                videoInfo.description || "No description available",
+              analytics: {
+                views: videoInfo.views,
+                likes: "—",
+                engagement_rate: "—",
+              },
+              highlights: videoInfo.key_timestamps
+                ? Object.entries(videoInfo.key_timestamps).map(
+                    ([key, value]) => `${key}: ${value}`
+                  )
+                : ["No highlights available"],
+              key_features: ["Feature information not available"],
+              platforms: videoInfo.product_links.map((link) => ({
+                name: link.store,
+                views: "—",
+                rating: "—",
+              })),
+            });
+          } else {
+            showNotification("Video not found", "error");
+          }
+        } catch (error) {
+          console.error("Error loading video:", error);
+          showNotification("Error loading video details", "error");
+        }
+      }
+
+      async function searchAll() {
+        const query = document.getElementById("searchInput").value;
+        if (!query) return;
+
+        const resultsContainer = document.getElementById("searchResults");
+        resultsContainer.innerHTML =
+          '<div class="col-span-3 text-center"><i class="fas fa-spinner spinner text-blue-600 text-3xl"></i></div>';
+
+        try {
+          const response = await fetch(
+            `/search/all/${encodeURIComponent(query)}`
+          );
+          const data = await response.json();
+
+          if (
+            data.status === "success" &&
+            (data.results.products.length > 0 || data.results.videos.length > 0)
+          ) {
+            let html = "";
+
+            // Products section
+            if (data.results.products.length > 0) {
+              html += `
+                            <div class="col-span-3">
+                                <h2 class="text-xl font-semibold mb-4">Products</h2>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        `;
+              html += data.results.products
+                .map(
+                  (product) => `
+                            <div class="product-card bg-white rounded-xl shadow-md p-4 cursor-pointer"
+                                 onclick="viewProduct('${product.id}')">
+                                <img src="${getProductImage(product.id)}" 
+                                     alt="${product.title}"
+                                     class="w-full h-48 object-cover rounded-lg mb-4">
+                                <h3 class="font-semibold mb-2">${
+                                  product.title
+                                }</h3>
+                                <p class="text-sm text-gray-500 mb-2">${
+                                  product.category
+                                }</p>
+                                <p class="text-blue-600 font-semibold">${
+                                  product.price_range
+                                }</p>
+                            </div>
+                        `
+                )
+                .join("");
+              html += "</div></div>";
+            }
+
+            // Videos section
+            if (data.results.videos.length > 0) {
+              html += `
+                            <div class="col-span-3 mt-8">
+                                <h2 class="text-xl font-semibold mb-4">Videos</h2>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        `;
+              html += data.results.videos
+                .map(
+                  (video) => `
+                            <div class="product-card bg-white rounded-xl shadow-md p-4 cursor-pointer"
+                                 onclick="viewVideo('${video.id}')">
+                                <div class="relative">
+                                    <img src="/api/placeholder/400/225" 
+                                         alt="${video.title}"
+                                         class="w-full h-48 object-cover rounded-lg mb-4">
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <i class="fas fa-play-circle text-white text-4xl opacity-75"></i>
+                                    </div>
+                                </div>
+                                <h3 class="font-semibold mb-2">${video.title}</h3>
+                                <p class="text-sm text-gray-500 mb-2">${video.category}</p>
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-gray-500 text-sm"><i class="fas fa-eye mr-1"></i>${video.analytics.views}</span>
+                                    <span class="text-gray-500 text-sm"><i class="fas fa-thumbs-up mr-1"></i>${video.analytics.likes}</span>
+                                </div>
+                            </div>
+                        `
+                )
+                .join("");
+              html += "</div></div>";
+            }
+
+            resultsContainer.innerHTML = html;
+          } else {
+            resultsContainer.innerHTML = `
+                        <div class="col-span-3 text-center text-gray-500">
+                            <i class="fas fa-search text-4xl mb-2"></i>
+                            <p>No results found</p>
+                        </div>
+                    `;
+          }
+        } catch (error) {
+          showNotification("Error searching content", "error");
+        }
+      }
+
+      function showNotification(message, type = "success") {
+        const notification = document.getElementById("notification");
+        const text = document.getElementById("notificationText");
+        text.textContent = message;
+        notification.classList.remove("hidden");
+        setTimeout(() => notification.classList.add("hidden"), 3000);
+      }
+
+      // Initialize
+      switchTab("upload");
+
+      // Product image mapping
+      const PRODUCT_ID_MAPPING = {
+        headphones: "elec_123",
+        shoes: "fash_123",
+        lamp: "decor_123",
+        lipstick: "beauty_123",
+        basketball: "sports_123",
+      };
+
+      const PRODUCT_IMAGES = {
+        electronics: {
+          elec_123: "/static/electronics/sony_headphones.jpg",
+          elec_124: "/static/electronics/smart_watch.webp",
+          elec_125: "/static/electronics/apple_ipad.jpg",
+        },
+        fashion: {
+          fash_123: "/static/fashion/nike_shoes.jpg",
+          fash_124: "/static/fashion/oversized_zara_blazer.jpg",
+          fash_125: "/static/fashion/adidas_shoes.webp",
+        },
+        home_decor: {
+          decor_123: "/static/home_decor/lamp.jpeg",
+          decor_124: "/static/home_decor/rug.jpeg",
+          decor_125: "/static/home_decor/mirror.jpg",
+        },
+        beauty: {
+          beauty_123: "/static/beauty/lipstick.jpg",
+          beauty_124: "/static/beauty/mascara.avif",
+          beauty_125: "/static/beauty/foundation.jpg",
+        },
+        sports: {
+          sports_123: "/static/sports/basketball.jpeg",
+          sports_124: "/static/sports/cleats.jpeg",
+          sports_125: "/static/sports/racket.webp",
+        },
+      };
+
+      function getProductImage(productId) {
+        for (const category of Object.values(PRODUCT_IMAGES)) {
+          if (productId in category) {
+            return category[productId];
+          }
+        }
+        return "/static/placeholder.png";
+      }
+
+      function init() {
+        const elements = initializeEventListeners();
+
+        fetchGitHubData();
+
+         }
+       init();
+    </script>
+  </body>
+</html>
